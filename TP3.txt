@@ -1,0 +1,91 @@
+
+[TP3] - Spark Streaming
+Exercice 1 : Utilisation de Spark Streaming
+
+Récupérer Apache Flume ici
+
+Créer un fichier de configuration spk.properties pour Flume dans le répertoire conf
+
+Utiliser Apache Flume
+
+a1.sources = r1
+a1.channels = c1
+a1.sinks = k1 spk
+
+a1.sources.r1.type = spooldir
+a1.sources.r1.spoolDir = [spoolDir]
+a1.sources.r1.channels = c1
+
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 1000
+a1.channels.c1.transactionCapacity = 100
+
+a1.sinks.k1.type = logger
+a1.sinks.k1.channel = c1
+
+a1.sinks.spk.type = avro
+a1.sinks.spk.hostname = localhost
+a1.sinks.spk.port = 4444
+a1.sinks.spk.channel = c1
+
+Lancer un agent Flume
+
+$ bin/flume-ng agent -n a1 -c conf -f conf/spk.properties
+
+Ajouter les dépendances suivantes
+
+<dependency>
+    <groupId>org.apache.spark</groupId>
+    <artifactId>spark-streaming_2.12</artifactId>
+    <version>2.4.4</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.spark</groupId>
+    <artifactId>spark-streaming-flume_2.12</artifactId>
+    <version>2.4.4</version>
+</dependency>
+
+Créer une nouvelle classe StreamingTest dans le projet
+
+Initialiser le context
+
+SparkConf conf = new SparkConf().setAppName("Spark Streaming Test").setMaster("local[*]");
+JavaStreamingContext ssc = new JavaStreamingContext(conf, new Duration(5000));
+
+Configurer le stream Flume
+
+JavaReceiverInputDStream<SparkFlumeEvent> flumeStream =
+        FlumeUtils.createStream(ssc, "localhost", 4444);
+
+Compter les mots qui arrivent dans le flux et sauvegarder le résultat dans Redis
+
+Télécharger l’image Docker (disponible ici) et la charger via la commande suivante
+
+$ docker load -i redis.tar
+
+Démarrer une instance de Redis
+
+$ docker run -p 6379:6379 -v ~/tmp/redis/data:/data --name spk-redis -d redis redis-server --appendonly yes
+
+Il est alors possible de se connecter
+
+$ docker run -it --link spk-redis:redis --rm redis redis-cli -h redis -p 6379
+
+Ajouter la dépendance suivante
+
+  <dependency>
+      <groupId>redis.clients</groupId>
+      <artifactId>jedis</artifactId>
+      <version>2.9.0</version>
+  </dependency>
+
+Créer une connection à l’instance Redis
+
+Jedis jedis = new Jedis("localhost");
+
+Leuville Objects Formation
+
+    Copyright Leuville 2017
+    formation@leuville.com
+
