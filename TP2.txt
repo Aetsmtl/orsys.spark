@@ -1,0 +1,87 @@
+
+[TP2] - Spark SQL
+HDP
+
+Vous pouvez télécharger HDP 2.6 : ici
+Exercice 1 : RDD sur le fichier Licences_2015.csv
+
+Le fichier licences_2012.csv (téléchargé sur le site https://www.data.gouv.fr/fr/ et disponible ici) recense le nombre de licenciés de chaque fédération sportive par ville, sexe et catégories d’age.
+
+Le fichier licences-dictionnaire-des-variables.xls (disponible ici) présente le schéma.
+
+Le but de l’exercice est de déterminer quels sont les départements où il y a le plus grand pourcentage de licenciés par rapport à la population du département dans la Fédération Française de Football.
+
+Pour cela, il est demandé d’utiliser des RDD.
+
+Le fichier contenant la liste des codes de fédération est disponible ici.
+Exercice 2 : Utilisation de Spark SQL
+
+Télécharger les dépendances (disponible ici)
+
+Ajouter la dépendance suivante
+
+<dependency>
+    <groupId>org.apache.spark</groupId>
+    <artifactId>spark-sql_2.11</artifactId>
+    <version>2.4.4</version>
+</dependency>
+
+A l’aide de Spark SQL, faire une requête permettant de récuperer les 10 fédérations ayant le plus de licenciés.
+
+La liste des fédérations est disponible au format JSON ici.
+
+Pour utiliser les fonctions statiques, faire l’import suivant
+
+import static org.apache.spark.sql.functions.*;
+
+Exercice 3 : Utiliser une DataSource externe
+
+Le but de cet exercice est de sauvegarder le nombre de licenciés par fédération dans une table Mysql ayant comme schéma
+
+CREATE TABLE stat_licences (
+  code INT NOT NULL,
+  libelle VARCHAR(128) NOT NULL,
+  nb INT NOT NULL,
+  CONSTRAINT pk_code PRIMARY KEY (code)
+);
+
+Enregitrer le fichier creation.sql (disponible ici) dans le répertoire ~/tmp/scripts
+
+Télécharger l’image Docker (disponible ici) et la charger via la commande suivante
+
+$ docker load -i tp-mysql-images.tar
+
+Lancer un conteneur Docker pour avoir une instance de Mysql disponible
+
+$ docker run --name spk-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root -v ~/tmp/scripts:/docker-entrypoint-initdb.d -d mysql
+
+Vérifier que le script a bien été exécuté sur le conteneur en se connectant au conteneur
+
+$ docker exec -it spk-mysql mysql -u root -proot
+mysql> use spk;
+mysql> show tables;
++---------------+
+| Tables_in_spk |
++---------------+
+| stat_licences |
++---------------+
+1 row in set (0.00 sec)
+
+Sortir du conteneur
+
+mysql> quit
+Bye
+
+Ajouter la dépendance suivante pour avoir le driver pour mysql
+
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>5.1.40</version>
+</dependency>
+
+Leuville Objects Formation
+
+    Copyright Leuville 2017
+    formation@leuville.com
+

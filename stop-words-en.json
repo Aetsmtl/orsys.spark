@@ -1,1 +1,94 @@
 ["a","a's","able","about","above","according","accordingly","across","actually","after","afterwards","again","against","ain't","all","allow","allows","almost","alone","along","already","also","although","always","am","among","amongst","an","and","another","any","anybody","anyhow","anyone","anything","anyway","anyways","anywhere","apart","appear","appreciate","appropriate","are","aren't","around","as","aside","ask","asking","associated","at","available","away","awfully","b","be","became","because","become","becomes","becoming","been","before","beforehand","behind","being","believe","below","beside","besides","best","better","between","beyond","both","brief","but","by","c","c'mon","c's","came","can","can't","cannot","cant","cause","causes","certain","certainly","changes","clearly","co","com","come","comes","concerning","consequently","consider","considering","contain","containing","contains","corresponding","could","couldn't","course","currently","d","definitely","described","despite","did","didn't","different","do","does","doesn't","doing","don't","done","down","downwards","during","e","each","edu","eg","eight","either","else","elsewhere","enough","entirely","especially","et","etc","even","ever","every","everybody","everyone","everything","everywhere","ex","exactly","example","except","f","far","few","fifth","first","five","followed","following","follows","for","former","formerly","forth","four","from","further","furthermore","g","get","gets","getting","given","gives","go","goes","going","gone","got","gotten","greetings","h","had","hadn't","happens","hardly","has","hasn't","have","haven't","having","he","he's","hello","help","hence","her","here","here's","hereafter","hereby","herein","hereupon","hers","herself","hi","him","himself","his","hither","hopefully","how","howbeit","however","i","i'd","i'll","i'm","i've","ie","if","ignored","immediate","in","inasmuch","inc","indeed","indicate","indicated","indicates","inner","insofar","instead","into","inward","is","isn't","it","it'd","it'll","it's","its","itself","j","just","k","keep","keeps","kept","know","known","knows","l","last","lately","later","latter","latterly","least","less","lest","let","let's","like","liked","likely","little","look","looking","looks","ltd","m","mainly","many","may","maybe","me","mean","meanwhile","merely","might","more","moreover","most","mostly","much","must","my","myself","n","name","namely","nd","near","nearly","necessary","need","needs","neither","never","nevertheless","new","next","nine","no","nobody","non","none","noone","nor","normally","not","nothing","novel","now","nowhere","o","obviously","of","off","often","oh","ok","okay","old","on","once","one","ones","only","onto","or","other","others","otherwise","ought","our","ours","ourselves","out","outside","over","overall","own","p","particular","particularly","per","perhaps","placed","please","plus","possible","presumably","probably","provides","q","que","quite","qv","r","rather","rd","re","really","reasonably","regarding","regardless","regards","relatively","respectively","right","s","said","same","saw","say","saying","says","second","secondly","see","seeing","seem","seemed","seeming","seems","seen","self","selves","sensible","sent","serious","seriously","seven","several","shall","she","should","shouldn't","since","six","so","some","somebody","somehow","someone","something","sometime","sometimes","somewhat","somewhere","soon","sorry","specified","specify","specifying","still","sub","such","sup","sure","t","t's","take","taken","tell","tends","th","than","thank","thanks","thanx","that","that's","thats","the","their","theirs","them","themselves","then","thence","there","there's","thereafter","thereby","therefore","therein","theres","thereupon","these","they","they'd","they'll","they're","they've","think","third","this","thorough","thoroughly","those","though","three","through","throughout","thru","thus","to","together","too","took","toward","towards","tried","tries","truly","try","trying","twice","two","u","un","under","unfortunately","unless","unlikely","until","unto","up","upon","us","use","used","useful","uses","using","usually","uucp","v","value","various","very","via","viz","vs","w","want","wants","was","wasn't","way","we","we'd","we'll","we're","we've","welcome","well","went","were","weren't","what","what's","whatever","when","whence","whenever","where","where's","whereafter","whereas","whereby","wherein","whereupon","wherever","whether","which","while","whither","who","who's","whoever","whole","whom","whose","why","will","willing","wish","with","within","without","won't","wonder","would","wouldn't","x","y","yes","yet","you","you'd","you'll","you're","you've","your","yours","yourself","yourselves","z","zero"]
+
+[TP1] - Spark Core
+
+Support en PDF ici
+Exercice 1 : Installation de Spark
+Prérequis
+Installation de Java
+
+Apache Spark fonctionne avec Java. Télécharger une distribution (disponible ici) et décompresser l’archive dans le répertoire /opt
+
+$ sudo tar xzf  jdk-8u111-linux-x64.tar.gz -C /opt/
+
+Indiquer à Ubuntu la version à utiliser pour la commande java
+
+$ sudo update-alternatives --install /usr/bin/java java /opt/jdk1.8.0_111/bin/java 1
+
+Installation de Apache Spark
+
+Décompresser l’archive de la distribution (disponible ici) dans le répertoire ‘~’
+
+$ tar xzf spark-2.4.4-bin-hadoop2.7.tgz -C ~
+
+Créer un lien symbolique vers le répertoire
+
+$ ln -s ~/spark-2.4.4-bin-hadoop2.7 ~/spark
+
+Tester l’installation
+
+$ cd ~/spark
+$ bin/spark-shell
+
+Exercice 2 : WordCount, le Hello World du MapReduce
+
+Dans cet exercice, le but est de réaliser un programme permettant de compter le nombre d’occurrences de chaque mot d’un texte en utilisant un algorithme MapReduce.
+
+Le fichier à analyser est ici .
+Création du projet Java
+
+Dans Eclipse, créer un nouveau projet spark-wordcount de type Maven Project.
+
+Ajouter les dépendances suivantes dans le pom.xml
+
+<dependencies>
+  <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-core_2.12</artifactId>
+      <version>2.4.4</version>
+  </dependency>
+</dependencies>
+
+Configurer Maven pour compiler en Java 8 :
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+Développement d’une classe Java
+
+Dans un main, commencer par charger un context
+
+SparkConf sparkConf = new SparkConf().setMaster("local[*]").setAppName("WordCount");
+JavaSparkContext context = new JavaSparkContext(sparkConf);
+
+Tester le job
+
+Ajouter le fichier log4j.properties (disponible ici) dans src/main/resources.
+Pour aller plus loin
+
+Enlever les mots les plus courants dans le comptage à l’aide du fichier stop-words-en.json (disponible ici)
+
+Utiliser la dépendance suivante pour manipuler du JSON
+
+  <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20160810</version>
+  </dependency>
+
+Exemple
+
+JSONArray a = new JSONArray("["toto", "titi", "tata"]");
+List<String> list = new ArrayList<String>();
+a.forEach(o -> list.add(((String)o)));
+
+Exercice 3 : Réaliser un programme MapReduce
+
+Le fichier liste_mots_francais.txt (disponible ici) propose une liste de mots courants de la langue française (plus de 1000). Le but de l’exercice est de déterminer quels mots sont des anagrammes.
+Leuville Objects Formation
+
+    Copyright Leuville 2017
+    formation@leuville.com
+
